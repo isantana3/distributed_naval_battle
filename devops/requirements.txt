@@ -3,3 +3,4 @@ ipython==8.10.0
 Pyro4==4.82
 pdbpp==0.10.2
 python-decouple==3.4
+pyzmq==25.1.1

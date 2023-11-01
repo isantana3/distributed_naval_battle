@@ -1,16 +1,29 @@
-import Pyro4
+#
+#   Hello World server in Python
+#   Binds REP socket to tcp://*:5555
+#   Expects b"Hello" from client, replies with b"World"
+#
 
+import time
+import zmq
 
-@Pyro4.expose
-class HelloWorld:
-    def hello(self):
-        return 'Hello World'
+context = zmq.Context()
+socket = context.socket(zmq.REP)
+socket.bind("tcp://*:5555")
 
+player = '1'
+while True:
+    message = socket.recv()
+    msg = bytes.decode(message)
+    print(f"Received request: {message}")
 
-daemon = Pyro4.Daemon()
-
-uri = daemon.register(HelloWorld)
-names_server = Pyro4.locateNS()
-names_server.register('obj', uri)
-
-daemon.requestLoop()
+    if msg != player:
+        response = 'not your turn'
+    else:
+        response = f'player {player} turn'
+        if player == '1':
+            player = '2'
+        else:
+            player = '1'
+    time.sleep(2)
+    socket.send(response.encode())
